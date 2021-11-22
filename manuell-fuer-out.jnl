@@ -1,0 +1,190 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from optimization import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models.changeKey(fromName='Model-1', toName='geometrie-sachen')
+mdb.models['geometrie-sachen'].Material(name='steel')
+mdb.models['geometrie-sachen'].materials['steel'].Elastic(table=((210000.0, 
+    0.3), ))
+mdb.models['geometrie-sachen'].materials['steel'].Plastic(table=((300.0, 0.0), 
+    (15300.0, 1.0)))
+mdb.models['geometrie-sachen'].ConstrainedSketch(name='platte', sheetSize=
+    200.0)
+mdb.models['geometrie-sachen'].sketches['platte'].rectangle(point1=(0.0, 0.0), 
+    point2=(20.0, 12.0))
+mdb.models['geometrie-sachen'].sketches['platte'].CircleByCenterPerimeter(
+    center=(6.0, 6.0), point1=(8.0, 6.0))
+mdb.models['geometrie-sachen'].sketches['platte'].CircleByCenterPerimeter(
+    center=(12.0, 8.0), point1=(14.0, 8.0))
+mdb.models['geometrie-sachen'].Part(dimensionality=TWO_D_PLANAR, name='Platte', 
+    type=DEFORMABLE_BODY)
+mdb.models['geometrie-sachen'].parts['Platte'].BaseShell(sketch=
+    mdb.models['geometrie-sachen'].sketches['platte'])
+mdb.models['geometrie-sachen'].parts['Platte'].Set(edges=
+    mdb.models['geometrie-sachen'].parts['Platte'].edges.findAt(((0, 6.0, 0), 
+    )), name='links')
+mdb.models['geometrie-sachen'].parts['Platte'].Set(edges=
+    mdb.models['geometrie-sachen'].parts['Platte'].edges.findAt(((0.0, 3.0, 
+    0.0), ), ), name='links')
+mdb.models['geometrie-sachen'].parts['Platte'].Set(edges=
+    mdb.models['geometrie-sachen'].parts['Platte'].edges.findAt(((20.0, 9.0, 
+    0.0), (0.0, 3.0, 0.0), )), name='aussen-edges-schleife')
+mdb.models['geometrie-sachen'].parts['Platte'].Set(edges=
+    mdb.models['geometrie-sachen'].parts['Platte'].edges.findAt(((20.0, 9.0, 
+    0.0), (0.0, 3.0, 0.0), )), name='aussen-edges-direkt')
+mdb.models['geometrie-sachen'].parts['Platte'].ReferencePoint(point=(0, 0, 0))
+mdb.models['geometrie-sachen'].parts['Platte'].Set(name='RP', referencePoints=(
+    mdb.models['geometrie-sachen'].parts['Platte'].referencePoints[6], ))
+mdb.models['geometrie-sachen'].parts['Platte'].DatumPlaneByPrincipalPlane(
+    offset=10.0, principalPlane=YZPLANE)
+mdb.models['geometrie-sachen'].parts['Platte'].PartitionFaceByDatumPlane(
+    datumPlane=mdb.models['geometrie-sachen'].parts['Platte'].datums[8], faces=
+    mdb.models['geometrie-sachen'].parts['Platte'].faces)
+mdb.models['geometrie-sachen'].parts['Platte'].Set(edges=
+    mdb.models['geometrie-sachen'].parts['Platte'].edges, name='all-edg')
+mdb.models['geometrie-sachen'].parts['Platte'].SetByBoolean(name=
+    'all-except-outer', operation=DIFFERENCE, sets=(
+    mdb.models['geometrie-sachen'].parts['Platte'].sets['all-edg'], 
+    mdb.models['geometrie-sachen'].parts['Platte'].sets['aussen-edges-direkt']))
+mdb.models['geometrie-sachen'].keywordBlock.synchVersions(
+    storeNodesAndElements=False)
+mdb.models['geometrie-sachen'].keywordBlock.setValues(edited=0)
+# Save by p1340760 on 2021_11_22-16.30.50; build 2020 2019_09_13-19.49.31 163176
+from part import *
+from material import *
+from section import *
+from optimization import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['geometrie-sachen'].HomogeneousSolidSection(material='steel', name=
+    'steel', thickness=None)
+mdb.models['geometrie-sachen'].parts['Platte'].Set(faces=
+    mdb.models['geometrie-sachen'].parts['Platte'].faces.findAt(((8.61592, 
+    6.921789, 0.0), ), ((10.050747, 5.078211, 0.0), ), ), name='all')
+mdb.models['geometrie-sachen'].parts['Platte'].SectionAssignment(offset=0.0, 
+    offsetField='', offsetType=MIDDLE_SURFACE, region=
+    mdb.models['geometrie-sachen'].parts['Platte'].sets['all'], sectionName=
+    'steel', thicknessAssignment=FROM_SECTION)
+mdb.models['geometrie-sachen'].rootAssembly.DatumCsysByDefault(CARTESIAN)
+mdb.models['geometrie-sachen'].rootAssembly.Instance(dependent=ON, name=
+    'Platte-1', part=mdb.models['geometrie-sachen'].parts['Platte'])
+mdb.models['geometrie-sachen'].StaticStep(name='innendruck', previous=
+    'Initial')
+mdb.models['geometrie-sachen'].parts['Platte'].Set(name='right-top', vertices=
+    mdb.models['geometrie-sachen'].parts['Platte'].vertices.findAt(((20.0, 
+    12.0, 0.0), )))
+mdb.models['geometrie-sachen'].parts['Platte'].Set(edges=
+    mdb.models['geometrie-sachen'].parts['Platte'].edges.findAt(((7.5, 0.0, 
+    0.0), ), ((17.5, 0.0, 0.0), ), ), name='bottom')
+mdb.models['geometrie-sachen'].parts['Platte'].Surface(name='innendruck', 
+    side1Edges=mdb.models['geometrie-sachen'].parts['Platte'].edges.findAt(((
+    6.0, 8.0, 0.0), ), ((13.414214, 9.414214, 0.0), ), ((10.585786, 6.585786, 
+    0.0), ), ))
+mdb.models['geometrie-sachen'].rootAssembly.regenerate()
+mdb.models['geometrie-sachen'].DisplacementBC(amplitude=UNSET, createStepName=
+    'Initial', distributionType=UNIFORM, fieldName='', localCsys=None, name=
+    'xsym', region=
+    mdb.models['geometrie-sachen'].rootAssembly.instances['Platte-1'].sets['links']
+    , u1=SET, u2=UNSET, ur3=UNSET)
+mdb.models['geometrie-sachen'].DisplacementBC(amplitude=UNSET, createStepName=
+    'Initial', distributionType=UNIFORM, fieldName='', localCsys=None, name=
+    'ysym', region=
+    mdb.models['geometrie-sachen'].rootAssembly.instances['Platte-1'].sets['bottom']
+    , u1=UNSET, u2=SET, ur3=UNSET)
+mdb.models['geometrie-sachen'].Pressure(amplitude=UNSET, createStepName=
+    'innendruck', distributionType=UNIFORM, field='', magnitude=10.0, name=
+    'Load-1', region=
+    mdb.models['geometrie-sachen'].rootAssembly.instances['Platte-1'].surfaces['innendruck'])
+# Save by p1340760 on 2021_11_22-16.36.34; build 2020 2019_09_13-19.49.31 163176
+from part import *
+from material import *
+from section import *
+from optimization import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['geometrie-sachen'].parts['Platte'].seedPart(deviationFactor=0.1, 
+    minSizeFactor=0.1, size=1.2)
+mdb.models['geometrie-sachen'].parts['Platte'].seedPart(deviationFactor=0.1, 
+    minSizeFactor=0.1, size=0.8)
+mdb.models['geometrie-sachen'].parts['Platte'].generateMesh()
+mdb.models['geometrie-sachen'].parts['Platte'].setElementType(elemTypes=(
+    ElemType(elemCode=CPS4R, elemLibrary=STANDARD, secondOrderAccuracy=OFF, 
+    hourglassControl=DEFAULT, distortionControl=DEFAULT), ElemType(
+    elemCode=CPS3, elemLibrary=STANDARD)), regions=(
+    mdb.models['geometrie-sachen'].parts['Platte'].faces.findAt(((8.61592, 
+    6.921789, 0.0), ), ((10.050747, 5.078211, 0.0), ), ), ))
+# Save by p1340760 on 2021_11_22-16.37.34; build 2020 2019_09_13-19.49.31 163176
+from part import *
+from material import *
+from section import *
+from optimization import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['geometrie-sachen'].rootAssembly.regenerate()
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=9000, memoryUnits=MEGA_BYTES, model='geometrie-sachen', modelPrint=
+    OFF, multiprocessingMode=DEFAULT, name='Job-1', nodalOutputPrecision=SINGLE
+    , numCpus=4, numDomains=4, numGPUs=0, queue=None, resultsFormat=ODB, 
+    scratch='', type=ANALYSIS, userSubroutine='', waitHours=0, waitMinutes=0)
+mdb.jobs.changeKey(fromName='Job-1', toName='platte-manuell')
+# Save by p1340760 on 2021_11_22-16.38.02; build 2020 2019_09_13-19.49.31 163176
+from part import *
+from material import *
+from section import *
+from optimization import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.jobs['platte-manuell'].submit(consistencyChecking=OFF)
+mdb.models['geometrie-sachen'].HistoryOutputRequest(createStepName='innendruck'
+    , name='H-Output-2', rebar=EXCLUDE, region=
+    mdb.models['geometrie-sachen'].rootAssembly.allInstances['Platte-1'].sets['right-top']
+    , sectionPoints=DEFAULT, variables=('U1', ))
+del mdb.jobs['platte-manuell']
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=9000, memoryUnits=MEGA_BYTES, model='geometrie-sachen', modelPrint=
+    OFF, multiprocessingMode=DEFAULT, name='platte-manuell', 
+    nodalOutputPrecision=SINGLE, numCpus=4, numDomains=4, numGPUs=0, queue=None
+    , resultsFormat=ODB, scratch='', type=ANALYSIS, userSubroutine='', 
+    waitHours=0, waitMinutes=0)
+mdb.jobs['platte-manuell'].submit(consistencyChecking=OFF)
+# Save by p1340760 on 2021_11_22-16.43.01; build 2020 2019_09_13-19.49.31 163176

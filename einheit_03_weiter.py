@@ -85,6 +85,11 @@ dp1 = part.DatumPlaneByPrincipalPlane(offset=10.0, principalPlane=YZPLANE)
 part.PartitionFaceByDatumPlane(datumPlane=part.datums[dp1.id],
 				               faces=part.faces)
 
+part.Set(name='all-edg', edges=part.edges)
+
+part.SetByBoolean(name='all-except-outer', operation=DIFFERENCE,
+               sets=(part.sets['all-edg'], part.sets['aussen-edges-direkt'], ))
+
 # Error zurueckgeben und Skriptausfuehrung abbrechen
 # Praktisch zum Testen des Skripts
 raise ValueError('alles in Ordnung?')	
