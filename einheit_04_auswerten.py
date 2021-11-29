@@ -73,3 +73,18 @@ s11_max = max([i.data[0] for i in odb.steps['innendruck'].frames[1].fieldOutputs
 # (naeheres unter martinpletz.com/fe-scripting-4)
 s_field = odb.steps['innendruck'].frames[1].fieldOutputs['S']
 bulk_data = s_field.bulkDataBlocks
+
+# Pfade
+
+vp = session.viewports['Viewport: 1']
+
+# Pfad erstellen
+path = session.Path(name='halbe-hoehe', type=POINT_LIST, expression=((0,h/2.,0), (b,h/2.,0)))
+
+vp.odbDisplay.setPrimaryVariable(variableLabel='S', outputPosition=INTEGRATION_POINT,
+                                 refinement=(INVARIANT, 'Max. Principal'),)
+
+xy1 = xyPlot.XYDataFromPath(path=path, includeIntersections=True, 
+    projectOntoMesh=False, pathStyle=PATH_POINTS, numIntervals=100, 
+    projectionTolerance=0, shape=UNDEFORMED, labelType=TRUE_DISTANCE_X, 
+    removeDuplicateXYPairs=True, includeAllElements=False)
