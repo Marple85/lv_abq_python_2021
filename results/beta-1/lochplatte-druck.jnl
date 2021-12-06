@@ -1,0 +1,78 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from optimization import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models.changeKey(fromName='Model-1', toName='lochplatte-druck')
+mdb.models['lochplatte-druck'].ConstrainedSketch(name='platte', sheetSize=
+    200.0)
+mdb.models['lochplatte-druck'].sketches['platte'].rectangle(point1=(0.0, 0.0), 
+    point2=(20.0, 12.0))
+mdb.models['lochplatte-druck'].sketches['platte'].CircleByCenterPerimeter(
+    center=(6.0, 6.0), point1=(8.0, 6.0))
+mdb.models['lochplatte-druck'].sketches['platte'].CircleByCenterPerimeter(
+    center=(12.0, 8.0), point1=(14.0, 8.0))
+mdb.models['lochplatte-druck'].Part(dimensionality=TWO_D_PLANAR, name='Platte', 
+    type=DEFORMABLE_BODY)
+mdb.models['lochplatte-druck'].parts['Platte'].BaseShell(sketch=
+    mdb.models['lochplatte-druck'].sketches['platte'])
+mdb.models['lochplatte-druck'].parts['Platte'].Set(faces=
+    mdb.models['lochplatte-druck'].parts['Platte'].faces, name='all')
+mdb.models['lochplatte-druck'].parts['Platte'].Set(edges=
+    mdb.models['lochplatte-druck'].parts['Platte'].edges.findAt(((0.0, 3.0, 
+    0.0), ), ), name='links')
+mdb.models['lochplatte-druck'].parts['Platte'].Set(edges=
+    mdb.models['lochplatte-druck'].parts['Platte'].edges.findAt(((15.0, 0.0, 
+    0.0), ), ), name='unten')
+mdb.models['lochplatte-druck'].parts['Platte'].Set(name='rechts-oben', 
+    vertices=mdb.models['lochplatte-druck'].parts['Platte'].vertices.findAt(((
+    20.0, 12.0, 0), )))
+mdb.models['lochplatte-druck'].parts['Platte'].Surface(name='loecher', 
+    side1Edges=mdb.models['lochplatte-druck'].parts['Platte'].edges.findAt(((
+    12.0, 10.0, 0.0), ), ((6.0, 8.0, 0.0), ), ))
+mdb.models['lochplatte-druck'].parts['Platte'].seedPart(size=0.5)
+mdb.models['lochplatte-druck'].parts['Platte'].setMeshControls(algorithm=
+    MEDIAL_AXIS, elemShape=QUAD, regions=
+    mdb.models['lochplatte-druck'].parts['Platte'].faces)
+mdb.models['lochplatte-druck'].parts['Platte'].setElementType(elemTypes=(
+    ElemType(elemCode=CPS8R, elemLibrary=STANDARD), ElemType(elemCode=CPS6, 
+    elemLibrary=STANDARD)), regions=(
+    mdb.models['lochplatte-druck'].parts['Platte'].faces, ))
+mdb.models['lochplatte-druck'].parts['Platte'].generateMesh()
+mdb.models['lochplatte-druck'].rootAssembly.Instance(dependent=ON, name=
+    'Platte-1', part=mdb.models['lochplatte-druck'].parts['Platte'])
+mdb.models['lochplatte-druck'].Material(name='stahl')
+mdb.models['lochplatte-druck'].materials['stahl'].Elastic(table=((210000.0, 
+    0.3), ))
+mdb.models['lochplatte-druck'].HomogeneousSolidSection(material='stahl', name=
+    'stahl', thickness=None)
+mdb.models['lochplatte-druck'].parts['Platte'].SectionAssignment(region=
+    mdb.models['lochplatte-druck'].parts['Platte'].sets['all'], sectionName=
+    'stahl', thicknessAssignment=FROM_SECTION)
+mdb.models['lochplatte-druck'].StaticStep(initialInc=1, maxInc=1, maxNumInc=
+    1000, minInc=1e-08, name='load', nlgeom=OFF, previous='Initial')
+mdb.models['lochplatte-druck'].HistoryOutputRequest(createStepName='load', 
+    name='H-Output-2', region=
+    mdb.models['lochplatte-druck'].rootAssembly.instances['Platte-1'].sets['rechts-oben']
+    , variables=('U1', 'U2'))
+mdb.models['lochplatte-druck'].DisplacementBC(createStepName='Initial', name=
+    'xsym', region=
+    mdb.models['lochplatte-druck'].rootAssembly.instances['Platte-1'].sets['links']
+    , u1=0)
+mdb.models['lochplatte-druck'].DisplacementBC(createStepName='Initial', name=
+    'ysym', region=
+    mdb.models['lochplatte-druck'].rootAssembly.instances['Platte-1'].sets['unten']
+    , u2=0)
+mdb.models['lochplatte-druck'].Pressure(createStepName='load', magnitude=10.0, 
+    name='pressure', region=
+    mdb.models['lochplatte-druck'].rootAssembly.instances['Platte-1'].surfaces['loecher'])
+# Save by p1340760 on 2021_12_06-17.13.10; build 2020 2019_09_13-19.49.31 163176
